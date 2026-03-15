@@ -1,0 +1,175 @@
+# Piloc Payment Funnel — Prototype Generator
+
+Génère des prototypes HTML pixel-fidèles du parcours de paiement Piloc.
+**Dès qu'un epic est fourni → génère immédiatement.**
+Exception unique : si l'epic ne précise pas le montant, le nom du locataire ou la référence contrat, poser **une seule question** groupant tous les manquants.
+
+---
+
+## Fichier de travail
+
+**Un seul fichier : `output/prototype-funnel.html`**
+
+- `output/` vide → copier `references/base-funnel.html` vers `output/prototype-funnel.html`
+- `output/prototype-funnel.html` existe → travailler directement dessus
+
+Le fichier base contient déjà : tokens, CSS layout + composants, vues 1–3 codées, shell complet, script `showView()`. **Ne rien reconstruire de mémoire — tout est dans le fichier.**
+
+---
+
+## Workflow (chaque epic)
+
+1. **Lire** `output/prototype-funnel.html` — identifier les slugs existants et les points de câblage à modifier
+2. **Identifier** depuis l'epic : slug(s) à créer, position dans le funnel, tab actif, composants requis
+3. **Si composant absent du fichier** → lire `references/components.md` pour récupérer le CSS verbatim
+4. **str_replace** à `<!-- ADD_SCREENS_HERE -->` → insérer la/les nouvelle(s) vue(s)
+5. **str_replace** à `/* ADD_TAB_ENTRIES */` → ajouter les entrées slug→tab
+6. **Mettre à jour les wirings** selon la position dans le funnel (voir règle ci-dessous)
+
+---
+
+## Ordre du funnel et règle de câblage
+
+### L'ordre du funnel est déclaré par chaque epic — il n'est pas fixe
+
+Avant de générer, l'ordre complet doit être connu :
+
+```
+[écran A] → [écran B] → [écran C] → …
+```
+
+**Si l'epic ne précise pas la position des nouveaux écrans dans le funnel → poser cette question avant de générer :**
+
+> "Dans quel ordre ces écrans s'insèrent-ils dans le funnel ?
+> Ex : reassurance → **[nouvel écran]** → choix-paiement, ou après choix-paiement ?"
+
+Une fois l'ordre confirmé, déduire les câblages nécessaires (quels boutons pointent vers quoi) et générer.
+
+### Points de câblage dans le fichier base
+
+Chaque point est marqué d'un commentaire `WIRING` et d'un `id` stable sur le bouton.
+
+| ID bouton | Cible par défaut (fichier base) | Rôle |
+|---|---|---|
+| `btn-valider-auth` | `step-reassurance` (dans le JS) | Sortie de l'identification |
+| `btn-suivant` | `step-choix-paiement` | Sortie de la réassurance |
+| `btn-precedent` | `step-reassurance` | Retour depuis choix-paiement |
+| `btn-virement` | _(aucune)_ | Choix virement — toujours câbler |
+| `btn-carte` | _(aucune)_ | Choix carte — toujours câbler |
+
+**Règle :** seul le `showView()` cible change. Le contenu des vues 1–3 est figé.
+
+Les écrans générés (step 4+) exposent leurs propres boutons de navigation — pas d'id réservé, câbler librement avec `onclick="showView('step-[slug]')"`.
+
+### Déduire les câblages depuis l'ordre déclaré
+
+Une fois l'ordre connu, parcourir la séquence et pour chaque transition :
+1. Identifier le bouton sortant (dans l'écran précédent) → mettre à jour sa cible
+2. Identifier le bouton retour (dans l'écran suivant, si applicable) → mettre à jour sa cible
+
+Exemple — ordre : `reassurance → plan-echelonne → choix-paiement` :
+```
+btn-suivant   (vue 2) → showView('step-plan-echelonne')
+btn-precedent (vue 3) → showView('step-plan-echelonne')
+plan-echelonne "Suivant" → showView('step-choix-paiement')
+plan-echelonne "Précédent" → showView('step-reassurance')
+```
+
+Exemple — ordre : `choix-paiement → saisie-iban` :
+```
+btn-virement (vue 3) → showView('step-saisie-iban')
+saisie-iban "Précédent" → showView('step-choix-paiement')
+```
+
+---
+
+## Règles absolues
+
+### Layout — invariants stricts
+
+- Shell `.payment-shell` : 375px fixe, fond navy
+- Card `.payment-card` : `border-radius: 10px` tous les coins, flex column, `overflow: hidden`
+- `.payment-content` : `flex: 1` — pousse le footer en bas. **Ne jamais** ajouter `margin-top: auto` sur `.payment-footer`
+- `.legal-footer` : toujours présent, toujours dernier enfant de `.payment-card`
+- **Jamais** de `position: absolute` pour les sections principales
+- **Jamais** de sidebar, header desktop ou nav latérale
+
+### CTA toujours visible sans scroll
+
+Les boutons `.payment-footer` doivent être visibles sans scroll sur 375×812px.
+Hauteur disponible pour `.payment-content` ≈ 580px (après logo 76px + tabs 45px + footer ~60px + legal 68px + gaps).
+Si un composant risque de dépasser → le retirer ou réduire les paddings.
+
+### Sprite SVG — CRITIQUE
+
+- **Ne jamais** lire, copier ou inclure `references/icons-sprite.svg`
+- **Ne jamais** inliner un `<path>` SVG
+- Usage exclusif : `<svg width="20" height="20" fill="currentColor"><use href="#icon-[nom]"></use></svg>`
+- Tailles : `16` inline · `20` boutons et tabs · `24` standalone
+- Icône absente → `<!-- TODO: icon-[nom] -->` et continuer
+
+Le sprite est embarqué directement dans `references/base-funnel.html` — aucun script à lancer.
+
+### Icônes disponibles (Heroicons v2 solid)
+
+`identification` · `currency-euro` · `list-bullet` · `shield-check` · `credit-card` · `check-circle` · `exclamation-triangle` · `calendar-days` · `clock` · `user` · `users` · `home` · `banknotes` · `wallet` · `receipt-percent` · `calculator` · `document` · `arrow-trending-up` · `chevron-left` · `chevron-right` · `check` · `x-mark` · `envelope` · `phone` · `bell` · `qr-code` · `book-open` · `key` · `tag` · `map-pin` · `bolt` · `cog-6-tooth` · `archive-box` · `inbox` · `clipboard-document-check` · `bars-3` · `table-cells` · `squares-2x2` · `funnel` · `magnifying-glass` · `plus` · `trash` · `eye` · `pencil-square`
+
+### Step tabs — tab actif par zone
+
+| Tab | Icône | Écrans |
+|---|---|---|
+| 1 | `icon-identification` | identification, reassurance + tout écran pré-paiement |
+| 2 | `icon-currency-euro` | choix-paiement, saisie IBAN/carte, validation paiement |
+| 3 | `icon-list-bullet` | récapitulatif, confirmation |
+
+### Typographie Inter
+
+| Poids | Usage |
+|---|---|
+| 400 | Corps, descriptions, valeurs contrat, noms titulaire |
+| 500 | Labels, CTA text, en-têtes sections, partie matchée suggestions |
+| 600 | Titres écran (`.screen-title`), step-badge, montant display |
+| **700** | **Interdit** |
+
+### Boutons
+
+- `.btn` + `.btn--primary` ou `.btn--secondary` + optionnel `.btn--with-icon`
+- `height: 48px`, `width: 100%` — sans exception
+- Désactivé : `.btn--primary.disabled` + `disabled` + `background: rgba(9,43,90,0.5)`
+- **Ne jamais** mettre `opacity` sur le parent d'un bouton désactivé
+
+### Composants — consulter l'index avant de créer
+
+11 composants dans `references/components.md` : info-card · auth-code-input · contract-card · amount-display · button · legal-footer · separator · step-badge · screen-title · auth-suggestions-inline · icônes
+
+- Composant existant → CSS verbatim, sans modification ni surcharge
+- Composant absent → créer avec tokens CSS uniquement, aucune valeur brute
+
+### Wording et réalisme
+
+- Titres : action courte ("Confirmez votre identité", "Choisissez votre mode de paiement")
+- CTAs : verbe infinitif ("Valider", "Suivant", "Payer")
+- Références contrat : `XXXXX — YYYYY` (5 chiffres — 5 chiffres)
+- Montants : 700–1 800 € (loyers parisiens)
+- Dates : `DD/MM/YYYY`
+- Noms : vrais prénoms + noms français
+
+---
+
+## Structure d'une vue 4+
+
+```html
+<!-- ═══ VUE N — [Titre]  ·  Tab [1|2|3] ═══ -->
+<div class="view hidden" id="step-[slug]">
+  <div class="payment-content">
+    <!-- composants -->
+  </div>
+  <div class="payment-footer">
+    <!-- boutons avec onclick="showView('step-[cible]')" -->
+  </div>
+  <div class="legal-footer">
+    <svg class="legal-footer__icon" width="14" height="14" fill="currentColor"><use href="#icon-shield-check"></use></svg>
+    <p class="legal-footer__text">Ce service est proposé par Piloc SAS — "tous droits réservés" — Piloc<br>est agréé en qualité de MOBSP par l'ACPR</p>
+  </div>
+</div>
+```
