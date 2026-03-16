@@ -173,3 +173,100 @@ Le sprite est embarqué directement dans `references/base-funnel.html` — aucun
   </div>
 </div>
 ```
+
+---
+
+## FEEDBACK & RÉVISION — Boucle post-génération
+
+**Déclenchée automatiquement après chaque génération d'epic.** Ne pas attendre que l'utilisateur décrive un problème.
+
+### Message post-génération
+
+Après chaque `str_replace`, envoyer exactement ce bloc :
+
+```
+✓ Vue(s) ajoutée(s) — output/prototype-funnel.html
+  [Slug(s) générés : step-[slug1], step-[slug2]]
+
+Ouvre le fichier dans ton navigateur. Je vais recueillir ton feedback couche par couche :
+
+  1 · STRUCTURE     — vues présentes, ordre du funnel, câblage des boutons
+  2 · DESIGN        — layout mobile, composants conformes, CTA visible sans scroll
+  3 · CONTENU       — montants, noms, références contrat, wording des CTAs
+  4 · INTERACTIONS  — navigation entre vues, états désactivés, comportement du script
+
+On valide dans cet ordre — chaque couche s'appuie sur la précédente.
+Tu peux sauter directement à une couche si les précédentes te conviennent.
+
+→ Par quelle couche tu veux commencer ? Ou décris ce que tu as remarqué.
+```
+
+### Validation couche par couche
+
+Quand l'utilisateur choisit une couche, ouvrir cette couche avec ses questions. Ne pas toutes les poser en même temps. L'utilisateur donne son feedback en français.
+
+**Couche 1 — STRUCTURE**
+Demander :
+> « La structure du funnel est correcte ?
+> - Toutes les vues attendues sont présentes ?
+> - L'ordre du funnel est bon (quelle vue pointe vers quelle autre) ?
+> - Les boutons Suivant / Précédent pointent vers les bonnes cibles ? »
+
+Approuvé → passer à la couche 2.
+Changement → `str_replace` sur les `onclick="showView(...)"` concernés, revenir à la couche 1.
+
+**Couche 2 — DESIGN**
+Demander :
+> « Le rendu visuel est conforme ?
+> - Shell `.payment-shell` à 375px, card sans débordement ?
+> - Composants issus de `references/components.md` (pas de valeurs brutes) ?
+> - Le CTA `.payment-footer` est visible sans scroll sur mobile ?
+> - Tabs : bon onglet actif pour chaque vue ? »
+
+Approuvé → passer à la couche 3.
+Changement → `str_replace` ciblé sur le CSS ou le HTML du composant, revenir à la couche 2.
+
+**Couche 3 — CONTENU**
+Demander :
+> « Les données et le wording sont corrects ?
+> - Montant, nom du locataire et référence contrat exacts ?
+> - Titres d'écran : action courte et claire ?
+> - CTAs en infinitif ("Valider", "Suivant", "Payer") ?
+> - Poids typographiques respectés (600 pour titres, 400 pour corps, 700 interdit) ? »
+
+Approuvé → passer à la couche 4.
+Changement → `str_replace` sur la valeur dans le HTML, revenir à la couche 3.
+
+**Couche 4 — INTERACTIONS**
+Demander :
+> « Les interactions fonctionnent correctement ?
+> - La navigation Suivant / Précédent est fluide sur tout le funnel ?
+> - Les boutons désactivés ont bien `.btn--primary.disabled` + attribut `disabled` ?
+> - Le script `showView()` gère correctement toutes les transitions ? »
+
+Approuvé → **prototype validé** (voir ci-dessous).
+Changement → `str_replace` sur le `<script>` ou les attributs concernés, revenir à la couche 4.
+
+### Types de correction
+
+| Couche | Type de changement | Action |
+|--------|-------------------|--------|
+| 1 | Mauvais câblage / vue manquante | `str_replace` sur `onclick` ou insertion d'une nouvelle vue |
+| 2 | Composant non conforme / CTA hors scroll | `str_replace` sur le CSS ou le HTML |
+| 3 | Donnée incorrecte / wording à changer | `str_replace` sur la valeur dans le HTML |
+| 4 | Navigation cassée / état désactivé incorrect | `str_replace` sur le `<script>` |
+
+Toujours annoncer la correction avant de l'appliquer :
+```
+Correction couche 1 — str_replace :
+  btn-suivant (vue 2) : showView('step-choix-paiement') → showView('step-plan-echelonne')
+```
+
+### Validation finale
+
+Quand toutes les couches sont approuvées :
+```
+✅ Prototype validé — output/prototype-funnel.html est prêt à livrer.
+```
+
+Sauvegarder en mémoire toute décision non évidente pour les prochains epics (ex : "L'utilisateur préfère toujours afficher le récapitulatif du montant dans chaque vue, pas seulement à la fin").
