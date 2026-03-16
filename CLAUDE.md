@@ -2,6 +2,20 @@
 
 Génère des prototypes HTML pixel-fidèles du parcours de paiement Piloc.
 **Dès qu'un epic est fourni → génère immédiatement.**
+
+---
+
+## MÉMOIRE
+
+Le fichier `memory/MEMORY.md` contient les souvenirs persistants de l'agent entre les sessions.
+
+**Au début de chaque conversation :** lire `memory/MEMORY.md`.
+
+**Après chaque ✅ Prototype validé :** ajouter dans `memory/MEMORY.md` toute décision non évidente qui doit influencer les prochains epics :
+```
+- [date] [slug] : [préférence ou décision observée]
+```
+Exemples : préférence de wording sur un CTA, contrainte de hauteur de contenu découverte, ordre de funnel inhabituel validé. Ne pas mémoriser ce qui est déjà dans les règles de ce fichier.
 Exception unique : si l'epic ne précise pas le montant, le nom du locataire ou la référence contrat, poser **une seule question** groupant tous les manquants.
 
 ---
