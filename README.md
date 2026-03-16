@@ -145,11 +145,30 @@ Ouvre le panneau Claude Code dans VS Code. L'agent charge automatiquement les in
 
 ---
 
+## Mémoire de l'agent
+
+L'agent se souvient des décisions prises au fil des sessions. Sa mémoire est stockée dans **`memory/MEMORY.md`**, dans ce repo — elle voyage avec le projet et est visible par tout le monde.
+
+```
+memory/
+└── MEMORY.md   ← l'agent écrit ici après chaque prototype validé
+```
+
+**Ce qu'il mémorise :** uniquement les décisions non évidentes — un ordre de funnel inhabituel validé, une préférence de wording sur un CTA, une contrainte de hauteur découverte en session.
+
+**Ce qu'il ne mémorise pas :** les règles déjà dans `CLAUDE.md`, les données des prototypes, les corrections ponctuelles.
+
+> Tu peux lire, corriger ou supprimer des entrées directement dans `memory/MEMORY.md`. L'agent relit ce fichier au démarrage de chaque conversation.
+
+---
+
 ## Structure du projet
 
 ```
 ├── output/
 │   └── prototype-funnel.html    ← Fichier de travail unique (ignoré par git)
+├── memory/
+│   └── MEMORY.md                ← Mémoire persistante de l'agent (lisible et modifiable)
 ├── assets/
 │   └── logo.svg                 ← Logo Piloc embarqué dans le prototype
 ├── references/
