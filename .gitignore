@@ -4,3 +4,6 @@ output/
 # macOS
 .DS_Store
 **/.DS_Store
+
+# Variables d'environnement — ne jamais committer
+.env

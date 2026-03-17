@@ -5,6 +5,35 @@ Génère des prototypes HTML pixel-fidèles du parcours de paiement Piloc.
 
 ---
 
+## SIGNALEMENT DE BUGS
+
+Quand l'utilisateur signale un problème qui ressemble à une **erreur technique de l'agent** (câblage incorrect, composant cassé, vue manquante, navigation brisée) — et non une simple préférence de feedback — enregistrer le bug dans Supabase via :
+
+```bash
+bash scripts/log-bug.sh "slug" "plainte" "contexte"
+```
+
+**Déclenchement automatique** : si l'utilisateur décrit un comportement clairement incorrect (ex : "le bouton Suivant ne fait rien", "la vue n'apparaît pas", "le montant est à zéro"), proposer d'enregistrer sans qu'il ait à le demander :
+> « Ça ressemble à une erreur de l'agent. Je l'enregistre pour que Grégoire puisse l'examiner et mettre à jour les règles. »
+
+**Déclenchement explicite** : si l'utilisateur dit "signale ce bug", "enregistre ça", "c'est une erreur" — enregistrer immédiatement.
+
+**Si le bug est résolu en session** via itération, enregistrer la version résolue :
+```bash
+bash scripts/log-bug.sh "slug" "plainte" "contexte" "solution appliquée" "pourquoi ça a planté"
+```
+
+**Ne pas modifier `CLAUDE.md` pour corriger le bug.** Documenter uniquement. Grégoire examine, corrige les règles de son côté, et revalide.
+
+**Champs à remplir :**
+- `slug` : identifiant de la vue concernée (ex : `step-plan-echelonne`)
+- `plainte` : ce que l'utilisateur a dit, verbatim ou résumé fidèle
+- `contexte` : quelle vue, quel bouton, quelle action déclenchait le bug
+- `solution` : ce qui a corrigé le problème (si résolu)
+- `explication` : pourquoi le bug s'est produit (si compris)
+
+---
+
 ## MÉMOIRE
 
 Le fichier `memory/MEMORY.md` contient les souvenirs persistants de l'agent entre les sessions.
