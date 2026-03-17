@@ -145,6 +145,22 @@ Ouvre le panneau Claude Code dans VS Code. L'agent charge automatiquement les in
 
 ---
 
+## Suivi des bugs
+
+L'agent enregistre automatiquement les erreurs techniques dans une base de données centralisée. Tu n'as rien à faire — ça se passe en arrière-plan.
+
+**Quand un bug est enregistré :**
+- L'agent détecte un comportement clairement incorrect (bouton qui ne navigue pas, vue manquante, câblage inversé) et propose de le signaler
+- Ou tu dis explicitement "signale ce bug" / "c'est une erreur"
+
+**Ce qui est enregistré :** l'identifiant de la vue, ta plainte, le contexte, et si le bug a été résolu en session — la solution et l'explication.
+
+**Où voir les bugs :** Grégoire accède à tous les bugs de tous les projets depuis son dashboard. Il reproduit, corrige les règles de l'agent, et pousse la mise à jour. Tu récupères la correction avec `git pull`.
+
+> L'agent ne modifie jamais ses propres règles — il documente uniquement.
+
+---
+
 ## Mémoire de l'agent
 
 L'agent se souvient des décisions prises au fil des sessions. Sa mémoire est stockée dans **`memory/MEMORY.md`**, dans ce repo — elle voyage avec le projet et est visible par tout le monde.
@@ -189,3 +205,16 @@ git pull
 ```
 
 Le fichier `output/prototype-funnel.html` n'est jamais touché.
+
+---
+
+## Dépannage
+
+L'agent vérifie l'environnement au démarrage de chaque conversation et t'indique exactement quoi faire si quelque chose manque. Voici les problèmes les plus courants :
+
+| Problème | Solution |
+|---------|---------|
+| Fichiers `references/` manquants | `git pull` depuis la racine du projet |
+| Dossier `output/` absent | L'agent le crée automatiquement |
+| Mauvais dossier ouvert dans VS Code | **File → Open Folder** → sélectionner `piloc-payment-generator` |
+| L'agent ne répond pas | Vérifier que le plugin Claude Code est installé et connecté |

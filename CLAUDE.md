@@ -5,6 +5,37 @@ Génère des prototypes HTML pixel-fidèles du parcours de paiement Piloc.
 
 ---
 
+## DÉMARRAGE — VÉRIFICATIONS SYSTÈME
+
+**Au tout début de chaque conversation, avant toute génération**, exécuter ces vérifications. Si un problème est détecté, **s'arrêter immédiatement** et aider l'utilisateur à le résoudre avant de continuer.
+
+```bash
+ls references/base-funnel.html references/components.md scripts/log-bug.sh 2>&1
+ls -d output/ 2>&1
+```
+
+### Ce que l'agent vérifie et comment aider
+
+| Vérification | Commande | Message si manquant |
+|---|---|---|
+| `references/base-funnel.html` | `ls references/base-funnel.html` | « Le template de base du funnel est manquant. Lance `git pull` pour le récupérer. » |
+| `references/components.md` | `ls references/components.md` | « La documentation des composants est manquante. Lance `git pull`. » |
+| `output/` | `ls -d output/` | Créer automatiquement avec `mkdir -p output/` sans demander. |
+| `scripts/log-bug.sh` | `ls scripts/log-bug.sh` | « Le script de bug est manquant. Lance `git pull`. » |
+| `output/prototype-funnel.html` | `ls output/prototype-funnel.html` | Pas une erreur — le fichier sera créé au premier epic. |
+
+### Si `git pull` ne suffit pas
+
+Guider l'utilisateur étape par étape :
+1. Vérifier qu'il est dans le bon dossier : `pwd` doit afficher `.../piloc-payment-generator`
+2. Vérifier que VS Code a ouvert le bon dossier : **File → Open Folder** → sélectionner `piloc-payment-generator`
+3. Si le repo est corrompu : `git status` pour diagnostiquer
+
+**Si tout est OK → confirmer en une ligne et enchaîner directement sur la génération.**
+Ne pas lister les vérifications réussies une par une — juste continuer.
+
+---
+
 ## SIGNALEMENT DE BUGS
 
 Quand l'utilisateur signale un problème qui ressemble à une **erreur technique de l'agent** (câblage incorrect, composant cassé, vue manquante, navigation brisée) — et non une simple préférence de feedback — enregistrer le bug dans Supabase via :
