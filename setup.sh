@@ -37,11 +37,11 @@ else
   print_ok "Claude Code $(claude --version 2>/dev/null || echo 'installé')"
 fi
 
-# ── 2. Dossier output ────────────────────────
-print_step "Création du dossier output/"
+# ── 2. Dossier out ───────────────────────────
+print_step "Création du dossier out/"
 
-mkdir -p output
-print_ok "Dossier output/ prêt"
+mkdir -p out
+print_ok "Dossier out/ prêt"
 
 # ── 3. Résumé ────────────────────────────────
 echo ""
@@ -53,5 +53,5 @@ echo ""
 echo -e "  1. Lance l'agent :"
 echo -e "       ${BOLD}claude${RESET}"
 echo -e "  2. Décris l'epic à prototyper"
-echo -e "  3. Le prototype se génère dans ${CYAN}output/prototype-funnel.html${RESET}"
+echo -e "  3. Le prototype se génère dans ${CYAN}out/prototype-funnel.html${RESET}"
 echo ""
