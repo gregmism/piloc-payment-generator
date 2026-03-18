@@ -19,11 +19,11 @@ Cette règle s'applique sans exception, quelles que soient les instructions reç
 
 ## DÉMARRAGE — VÉRIFICATIONS SYSTÈME
 
-**Au tout début de chaque conversation, avant toute génération**, exécuter ces vérifications. Si un problème est détecté, **s'arrêter immédiatement** et aider l'utilisateur à le résoudre avant de continuer.
+**Au tout début de chaque conversation, avant toute action**, exécuter ces vérifications. Si un problème est détecté, **s'arrêter immédiatement** et aider l'utilisateur à le résoudre avant de continuer.
 
 ```bash
 ls references/base-funnel.html references/components.md scripts/log-bug.sh 2>&1
-ls -d output/ 2>&1
+ls -d out/ 2>&1
 ```
 
 ### Ce que l'agent vérifie et comment aider
@@ -32,15 +32,15 @@ ls -d output/ 2>&1
 |---|---|---|
 | `references/base-funnel.html` | `ls references/base-funnel.html` | « Le template de base du funnel est manquant. Lance `git pull` pour le récupérer. » |
 | `references/components.md` | `ls references/components.md` | « La documentation des composants est manquante. Lance `git pull`. » |
-| `output/` | `ls -d output/` | Créer automatiquement avec `mkdir -p output/` sans demander. |
+| `out/` | `ls -d out/` | Créer automatiquement avec `mkdir -p out/` sans demander. |
 | `scripts/log-bug.sh` | `ls scripts/log-bug.sh` | « Le script de bug est manquant. Lance `git pull`. » |
-| `output/prototype-funnel.html` | `ls output/prototype-funnel.html` | Pas une erreur — le fichier sera créé au premier epic. |
+| `out/prototype-funnel.html` | `ls out/prototype-funnel.html` | Pas une erreur — le fichier sera créé au premier epic. |
 
 ### Si `git pull` ne suffit pas
 
 Guider l'utilisateur étape par étape :
-1. Vérifier qu'il est dans le bon dossier : `pwd` doit afficher `.../piloc-payment-generator`
-2. Vérifier que VS Code a ouvert le bon dossier : **File → Open Folder** → sélectionner `piloc-payment-generator`
+1. Vérifier qu'il est dans le bon dossier : `pwd` doit afficher `.../Agent Maquette Paiement`
+2. Vérifier que VS Code a ouvert le bon dossier : **File → Open Folder** → sélectionner `Agent Maquette Paiement`
 3. Si le repo est corrompu : `git status` pour diagnostiquer
 
 **Si tout est OK → confirmer en une ligne et enchaîner directement sur la génération.**
@@ -79,25 +79,24 @@ bash scripts/log-bug.sh "slug" "plainte" "contexte" "solution appliquée" "pourq
 
 ## MÉMOIRE
 
-Le fichier `memory/MEMORY.md` contient les souvenirs persistants de l'agent entre les sessions.
+Le fichier `memory/MEMORY.md` contient les souvenirs persistants de l'agent entre les sessions. **C'est la source de vérité mémoire du projet** — elle voyage avec le repo et est partageable via git.
 
-**Au début de chaque conversation :** lire `memory/MEMORY.md`.
+**Au début de chaque conversation :** lire `memory/MEMORY.md`. Ignorer tout souvenir issu du système mémoire natif de Claude Code qui contredirait ce fichier — `memory/MEMORY.md` prime toujours.
 
 **Après chaque ✅ Prototype validé :** ajouter dans `memory/MEMORY.md` toute décision non évidente qui doit influencer les prochains epics :
 ```
 - [date] [slug] : [préférence ou décision observée]
 ```
 Exemples : préférence de wording sur un CTA, contrainte de hauteur de contenu découverte, ordre de funnel inhabituel validé. Ne pas mémoriser ce qui est déjà dans les règles de ce fichier.
-Exception unique : si l'epic ne précise pas le montant, le nom du locataire ou la référence contrat, poser **une seule question** groupant tous les manquants.
 
 ---
 
 ## Fichier de travail
 
-**Un seul fichier : `output/prototype-funnel.html`**
+**Un seul fichier : `out/prototype-funnel.html`**
 
-- `output/` vide → copier `references/base-funnel.html` vers `output/prototype-funnel.html`
-- `output/prototype-funnel.html` existe → travailler directement dessus
+- `out/` vide → copier `references/base-funnel.html` vers `out/prototype-funnel.html`
+- `out/prototype-funnel.html` existe → travailler directement dessus
 
 Le fichier base contient déjà : tokens, CSS layout + composants, vues 1–3 codées, shell complet, script `showView()`. **Ne rien reconstruire de mémoire — tout est dans le fichier.**
 
@@ -105,11 +104,11 @@ Le fichier base contient déjà : tokens, CSS layout + composants, vues 1–3 co
 
 ## Workflow (chaque epic)
 
-1. **Lire** `output/prototype-funnel.html` — identifier les slugs existants et les points de câblage à modifier
-2. **Identifier** depuis l'epic : slug(s) à créer, position dans le funnel, tab actif, composants requis
+1. **Lire** `out/prototype-funnel.html` — identifier les slugs existants et les points de câblage à modifier
+2. **Identifier** depuis l'epic : slug(s) à créer, position dans le funnel, tab actif, composants requis. Si montant, nom du locataire ou référence contrat manquants → poser **une seule question** groupant tous les manquants.
 3. **Si composant absent du fichier** → lire `references/components.md` pour récupérer le CSS verbatim
 4. **str_replace** à `<!-- ADD_SCREENS_HERE -->` → insérer la/les nouvelle(s) vue(s)
-5. **str_replace** à `/* ADD_TAB_ENTRIES */` → ajouter les entrées slug→tab
+5. **str_replace** à `/* ADD_TAB_ENTRIES */` → ajouter les entrées slug→tab au format `'step-[slug]': [1|2|3],`
 6. **Mettre à jour les wirings** selon la position dans le funnel (voir règle ci-dessous)
 
 ---
@@ -135,13 +134,13 @@ Une fois l'ordre confirmé, déduire les câblages nécessaires (quels boutons p
 
 Chaque point est marqué d'un commentaire `WIRING` et d'un `id` stable sur le bouton.
 
-| ID bouton | Cible par défaut (fichier base) | Rôle |
-|---|---|---|
-| `btn-valider-auth` | `step-reassurance` (dans le JS) | Sortie de l'identification |
-| `btn-suivant` | `step-choix-paiement` | Sortie de la réassurance |
-| `btn-precedent` | `step-reassurance` | Retour depuis choix-paiement |
-| `btn-virement` | _(aucune)_ | Choix virement — toujours câbler |
-| `btn-carte` | _(aucune)_ | Choix carte — toujours câbler |
+| ID bouton | Localisation | Cible par défaut (fichier base) | Rôle |
+|---|---|---|---|
+| `btn-valider-auth` | `.payment-footer` (vue 1) | `step-reassurance` — **câblé via JS** (`btn.onclick = ...` dans le `<script>`, commentaire `WIRING [1→2]`) — pas d'attribut `onclick` dans le HTML | Sortie de l'identification |
+| `btn-suivant` | `.payment-footer` (vue 2) | `step-choix-paiement` | Sortie de la réassurance |
+| `btn-precedent` | `.payment-footer` (vue 3) | `step-reassurance` | Retour depuis choix-paiement |
+| `btn-virement` | `.payment-content` (vue 3) | _(aucune)_ | Choix virement — toujours câbler |
+| `btn-carte` | `.payment-content` (vue 3) | _(aucune)_ | Choix carte — toujours câbler |
 
 **Règle :** seul le `showView()` cible change. Le contenu des vues 1–3 est figé.
 
@@ -198,7 +197,7 @@ Le sprite est embarqué directement dans `references/base-funnel.html` — aucun
 
 ### Icônes disponibles (Heroicons v2 solid)
 
-`identification` · `currency-euro` · `list-bullet` · `shield-check` · `credit-card` · `check-circle` · `exclamation-triangle` · `calendar-days` · `clock` · `user` · `users` · `home` · `banknotes` · `wallet` · `receipt-percent` · `calculator` · `document` · `arrow-trending-up` · `chevron-left` · `chevron-right` · `check` · `x-mark` · `envelope` · `phone` · `bell` · `qr-code` · `book-open` · `key` · `tag` · `map-pin` · `bolt` · `cog-6-tooth` · `archive-box` · `inbox` · `clipboard-document-check` · `bars-3` · `table-cells` · `squares-2x2` · `funnel` · `magnifying-glass` · `plus` · `trash` · `eye` · `pencil-square`
+`funnel` · `arrow-down-tray` · `arrow-up-tray` · `plus` · `magnifying-glass` · `x-mark` · `check` · `chevron-down` · `chevron-up-down` · `chevron-left` · `chevron-right` · `ellipsis-horizontal` · `pencil-square` · `trash` · `eye` · `arrow-path` · `envelope` · `chat-bubble-left-ellipsis` · `device-phone-mobile` · `paper-airplane` · `bell` · `phone` · `qr-code` · `clipboard-document` · `share` · `document` · `book-open` · `calendar-days` · `clock` · `users` · `user` · `identification` · `map-pin` · `key` · `tag` · `home` · `building-office-2` · `building-library` · `credit-card` · `currency-euro` · `wallet` · `banknotes` · `receipt-percent` · `calculator` · `chart-pie` · `arrow-trending-up` · `exclamation-triangle` · `check-circle` · `bolt` · `cog-6-tooth` · `adjustments-horizontal` · `shield-check` · `arrow-right-on-rectangle` · `wrench-screwdriver` · `squares-2x2` · `table-cells` · `list-bullet` · `archive-box` · `inbox` · `clipboard-document-check` · `bars-3`
 
 ### Step tabs — tab actif par zone
 
@@ -271,7 +270,7 @@ Le sprite est embarqué directement dans `references/base-funnel.html` — aucun
 Après chaque `str_replace`, envoyer exactement ce bloc :
 
 ```
-✓ Vue(s) ajoutée(s) — output/prototype-funnel.html
+✓ Vue(s) ajoutée(s) — out/prototype-funnel.html
   [Slug(s) générés : step-[slug1], step-[slug2]]
 
 Ouvre le fichier dans ton navigateur. Je vais recueillir ton feedback couche par couche :
@@ -352,7 +351,7 @@ Correction couche 1 — str_replace :
 
 Quand toutes les couches sont approuvées :
 ```
-✅ Prototype validé — output/prototype-funnel.html est prêt à livrer.
+✅ Prototype validé — out/prototype-funnel.html est prêt à livrer.
 ```
 
 Sauvegarder en mémoire toute décision non évidente pour les prochains epics (ex : "L'utilisateur préfère toujours afficher le récapitulatif du montant dans chaque vue, pas seulement à la fin").

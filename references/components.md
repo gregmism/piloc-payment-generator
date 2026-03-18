@@ -1,6 +1,6 @@
 # Payment Funnel — Composants
 
-> **Quand lire ce fichier ?** Uniquement si un epic requiert un composant absent de `output/prototype-funnel.html`. Consulter d'abord l'index ci-dessous pour vérifier si le composant existe — si oui, son CSS est déjà dans le fichier de sortie, ne pas le recopier.
+> **Quand lire ce fichier ?** Uniquement si un epic requiert un composant absent de `out/prototype-funnel.html`. Consulter d'abord l'index ci-dessous pour vérifier si le composant existe — si oui, son CSS est déjà dans le fichier de sortie, ne pas le recopier.
 
 Index et CSS de référence pour tous les composants du parcours de paiement.
 
@@ -345,7 +345,7 @@ Les marges négatives compensent le padding de la card pour que la bande soit pl
 .legal-footer {
   background: var(--color-surface-alt);
   border-top: 1px solid var(--color-border);
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 10px 10px;
   padding: 12px 16px;
   display: flex;
   flex-direction: column;

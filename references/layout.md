@@ -1,6 +1,8 @@
 # Payment Funnel — Layout
 
-> **Quand lire ce fichier ?** Uniquement si `references/base-funnel.html` doit être reconstruit ou mis à jour depuis Figma. Pour la génération courante, travailler directement sur `output/prototype-funnel.html` — tout le CSS et les écrans 1–3 y sont déjà inclus.
+> ⚠️ **DEPRECATED — Ne pas utiliser pour la génération courante.**
+> Ce fichier est une spec Figma de référence historique. Certaines valeurs sont obsolètes (icônes tabs, CSS legal-footer, chemin fichier de sortie). **Source faisant autorité : `references/base-funnel.html` et `references/components.md`.**
+> Ne lire ce fichier que si `references/base-funnel.html` doit être entièrement reconstruit depuis Figma.
 
 Spec de référence pour le shell, le CSS layout et le contenu Figma verbatim des écrans 1–3.
 
@@ -263,9 +265,11 @@ Chaque étape est une `<div class="view [hidden]">` directement dans `.payment-c
 
 | Tab | Icône            | Étapes actives                        |
 |-----|------------------|---------------------------------------|
-| 1   | information-circle | Identification, Réassurance         |
-| 2   | currency-euro    | Choix du paiement, saisie IBAN/carte  |
-| 3   | bars-3-center-left | Récapitulatif, Confirmation         |
+| 1   | `identification` | Identification, Réassurance           |
+| 2   | `currency-euro`  | Choix du paiement, saisie IBAN/carte  |
+| 3   | `list-bullet`    | Récapitulatif, Confirmation           |
+
+> ⚠️ Valeurs corrigées — `information-circle` et `bars-3-center-left` n'existent pas dans le sprite.
 
 ---
 
@@ -274,35 +278,38 @@ Chaque étape est une `<div class="view [hidden]">` directement dans `.payment-c
 Présent sur **tous les écrans** du funnel — sans exception.
 Dernier enfant direct de `.payment-card`, après `.payment-footer`.
 
+> ⚠️ CSS ci-dessous obsolète — utiliser `references/components.md` § 6 (Legal footer) comme source faisant autorité.
+> Corrections apportées : `border-radius` 8px → 10px, valeurs brutes → tokens, `height: 68px` et `transform` supprimés.
+
 ```css
 /* ─── LEGAL FOOTER ──────────────────────────────────────────────── */
 .legal-footer {
-  background: #f9f9f9;
-  border: 1px solid #dae0e4;
-  border-radius: 0 0 8px 8px;
-  height: 68px;
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 10px 10px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  margin: 0 -13px -16px;   /* déborde sur les paddings de .payment-card */
+  gap: 6px;
+  margin-left: -13px;
+  margin-right: -13px;
+  margin-bottom: -16px;
 }
 
 .legal-footer__icon {
-  transform: rotate(180deg) scaleY(-1);
-  width: 13px;
+  width: 14px;
   height: 14px;
+  color: var(--color-text-label);
 }
 
 .legal-footer__text {
-  font-family: var(--font);
-  font-weight: 400;
   font-size: 10px;
+  font-weight: 400;
+  color: var(--color-text-label);
+  text-align: center;
   line-height: 15px;
   letter-spacing: -0.2px;
-  color: #616a71;
-  text-align: center;
 }
 ```
 
@@ -326,7 +333,7 @@ Les sections ci-dessous reproduisent **verbatim** le contenu des 3 écrans de r�
 
 ### Écran 1 — Identification
 
-**Tab actif :** Tab 1 (information-circle)
+**Tab actif :** Tab 1 (`identification`)
 
 #### Info card (titre + description)
 
@@ -372,7 +379,7 @@ Legal footer  : présent
 
 ### Écran 2 — Réassurance
 
-**Tab actif :** Tab 1 (information-circle)
+**Tab actif :** Tab 1 (`identification`)
 
 #### Info card (titre + description)
 

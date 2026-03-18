@@ -1,7 +1,7 @@
 # Piloc Payment Funnel — Prototype Generator
 
 Agent de génération de prototypes HTML pixel-fidèles du parcours de paiement Piloc.
-Tu fournis un epic, l'agent génère ou enrichit `output/prototype-funnel.html` — un seul fichier de travail qui grandit à chaque sprint.
+Tu fournis un epic, l'agent génère ou enrichit `out/prototype-funnel.html` — un seul fichier de travail qui grandit à chaque sprint.
 
 ---
 
@@ -17,7 +17,7 @@ Tout écran du funnel de paiement locataire Piloc :
 | Saisie paiement | IBAN, carte bancaire, plan d'échelonnement |
 | Confirmation | Récapitulatif final, succès |
 
-**Sortie :** un seul fichier `output/prototype-funnel.html`, ouvrable dans un navigateur, format mobile 375px. Navigation entre les vues via JavaScript intégré — aucune dépendance externe.
+**Sortie :** un seul fichier `out/prototype-funnel.html`, ouvrable dans un navigateur, format mobile 375px. Navigation entre les vues via JavaScript intégré — aucune dépendance externe.
 
 ---
 
@@ -52,7 +52,7 @@ Si l'une de ces infos manque, l'agent pose une seule question groupée avant de 
 ## Étape 2 — Génération (automatique)
 
 L'agent :
-1. Lit `output/prototype-funnel.html` pour identifier les slugs existants
+1. Lit `out/prototype-funnel.html` pour identifier les slugs existants
 2. Insère la ou les nouvelles vues à `<!-- ADD_SCREENS_HERE -->`
 3. Met à jour les `onclick="showView(...)"` pour câbler la navigation dans l'ordre du funnel
 4. Ajoute les entrées dans le tableau slug → tab actif
@@ -66,7 +66,7 @@ L'agent :
 Après chaque génération, l'agent envoie ce message :
 
 ```
-✓ Vue(s) ajoutée(s) — output/prototype-funnel.html
+✓ Vue(s) ajoutée(s) — out/prototype-funnel.html
   [Slug(s) générés : step-plan-echelonne]
 
 Ouvre le fichier dans ton navigateur. Je vais recueillir ton feedback couche par couche :
@@ -116,7 +116,7 @@ cd piloc-payment-generator
 ./setup.sh
 ```
 
-Le script installe Claude Code et crée le dossier `output/`.
+Le script installe Claude Code et crée le dossier `out/`.
 
 ### 3. Ouvrir le projet dans VS Code
 
@@ -171,7 +171,7 @@ memory/
 ## Structure du projet
 
 ```
-├── output/
+├── out/
 │   └── prototype-funnel.html    ← Fichier de travail unique (ignoré par git)
 ├── memory/
 │   └── MEMORY.md                ← Mémoire persistante de l'agent (lisible et modifiable)
@@ -194,7 +194,7 @@ cd piloc-payment-generator
 git pull
 ```
 
-Le fichier `output/prototype-funnel.html` n'est jamais touché.
+Le fichier `out/prototype-funnel.html` n'est jamais touché.
 
 ---
 
@@ -205,6 +205,6 @@ L'agent vérifie l'environnement au démarrage de chaque conversation et t'indiq
 | Problème | Solution |
 |---------|---------|
 | Fichiers `references/` manquants | `git pull` depuis la racine du projet |
-| Dossier `output/` absent | L'agent le crée automatiquement |
+| Dossier `out/` absent | L'agent le crée automatiquement |
 | Mauvais dossier ouvert dans VS Code | **File → Open Folder** → sélectionner `piloc-payment-generator` |
 | L'agent ne répond pas | Vérifier que le plugin Claude Code est installé et connecté |
