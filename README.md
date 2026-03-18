@@ -40,20 +40,10 @@ Un seul fichier grandit à chaque epic — pas de réécriture complète.
 
 ### Le prompt de démarrage
 
-Lance l'agent et décris l'epic :
-
-```
-Epic : Plan de paiement échelonné
-Position dans le funnel : après reassurance, avant choix-paiement
-Montant : 1 240 €
-Locataire : Thomas Renard
-Référence contrat : 84712 — 93021
-```
+Lance l'agent et colle l'epic
 
 **Informations obligatoires à préciser :**
-- Nom du ou des écrans à créer
 - Position dans le funnel (avant / après quel écran existant)
-- Montant, nom du locataire, référence contrat
 
 Si l'une de ces infos manque, l'agent pose une seule question groupée avant de générer.
 
