@@ -36,6 +36,25 @@ Un seul fichier grandit à chaque epic — pas de réécriture complète.
 
 ---
 
+## Modification à la marge
+
+Tu peux modifier une page déjà générée sans réécrire l'epic complet. Il suffit de préciser dans le prompt quelle page tu veux modifier et ce que tu veux changer.
+
+**Pages disponibles :**
+- `identification`
+- `reassurance`
+- `choix-paiement`
+- Toute page ajoutée lors d'un epic précédent (utilise son slug)
+
+**Comment faire :**
+1. Dans le chat, indique le **nom de la page** à modifier
+2. Décris ce que tu veux **ajouter**, **changer** ou **supprimer**
+3. L'agent localise la vue dans `out/prototype-funnel.html` et applique les modifications par `str_replace`
+
+> Exemple : « Sur la page réassurance, je voudrais remplacer le bloc "Paiement sécurisé" par un bloc mettant en avant le délai de remboursement. »
+
+---
+
 ## Étape 1 — Ce que tu prépares
 
 ### Le prompt de démarrage
@@ -208,3 +227,30 @@ L'agent vérifie l'environnement au démarrage de chaque conversation et t'indiq
 | Dossier `out/` absent | L'agent le crée automatiquement |
 | Mauvais dossier ouvert dans VS Code | **File → Open Folder** → sélectionner `piloc-payment-generator` |
 | L'agent ne répond pas | Vérifier que le plugin Claude Code est installé et connecté |
+
+---
+
+## Partie technique
+
+### Logique de génération
+
+La génération repose sur un fichier de travail unique (`out/prototype-funnel.html`) qui grandit à chaque epic :
+
+1. **Lecture du fichier existant** — l'agent identifie les slugs de vues déjà présents et les points de câblage à mettre à jour.
+2. **Identification des besoins** — depuis l'epic, l'agent détermine les vues à créer, leur position dans le funnel, l'onglet actif, et les composants requis. Si la position dans le funnel n'est pas précisée, il pose une seule question groupée avant de générer.
+3. **Insertion par `str_replace`** — les nouvelles vues sont insérées au marqueur `<!-- ADD_SCREENS_HERE -->`, les entrées slug→tab au marqueur `/* ADD_TAB_ENTRIES */`.
+4. **Mise à jour des wirings** — les boutons Suivant / Précédent sont recâblés automatiquement selon l'ordre déclaré dans l'epic.
+
+L'agent ne réécrit jamais le fichier de zéro : chaque epic enrichit le prototype existant.
+
+### Règles du prompt system
+
+Les règles qui gouvernent le comportement de l'agent :
+
+- **Sécurité fichiers** — aucune suppression de fichier autorisée, quelle que soit la demande.
+- **Un seul fichier de travail** — tout le funnel vit dans `out/prototype-funnel.html`. Pas de fichier par écran.
+- **Ordre du funnel déclaré** — l'agent ne suppose pas l'ordre des écrans. Si l'epic ne le précise pas, il demande avant de générer.
+- **Composants verbatim** — le CSS des 11 composants est copié tel quel depuis `references/components.md`. Aucune valeur brute inventée.
+- **Icônes par sprite uniquement** — usage exclusif via `<use href="#icon-...">`. Aucun `<path>` SVG inline.
+- **CTA toujours visible sans scroll** — les boutons `.payment-footer` doivent être accessibles sur 375×812px sans scroll. Si un composant dépasse, l'agent réduit les paddings plutôt que de déplacer le bouton.
+- **L'agent ne modifie pas ses propres règles** — il documente les bugs dans Supabase et laisse la correction à Grégoire.
