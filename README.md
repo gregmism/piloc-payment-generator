@@ -210,8 +210,14 @@ memory/
 
 ```bash
 cd piloc-payment-generator
+git stash
+git clean -fd
 git pull
 ```
+
+- `git stash` — met de côté tes éventuelles modifications locales
+- `git clean` — supprime les fichiers locaux non suivis qui bloqueraient la mise à jour
+- `git pull` — récupère la dernière version
 
 Le fichier `out/prototype-funnel.html` n'est jamais touché.
 
